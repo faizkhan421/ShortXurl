@@ -8,48 +8,65 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f4f7;
     }
+
     header {
-      background-color: #a4f0e0; /* aeglo shade */
-      color: #000;
+      background-color: #0056b3;
+      color: #fff;
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-direction: row-reverse;
       position: relative;
+      z-index: 1000;
     }
+
     .brand {
       font-size: 22px;
       font-weight: bold;
     }
+
     .menu-icon {
       font-size: 28px;
       cursor: pointer;
+      user-select: none;
     }
-    .sidebar {
-      position: fixed;
-      top: 0;
-      right: -250px;
-      width: 250px;
-      height: 100%;
-      background-color: #fff;
-      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-      transition: 0.3s;
-      padding-top: 60px;
-      z-index: 999;
-    }
-    .sidebar.active {
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
       right: 0;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      width: 220px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      z-index: 999;
+      border-radius: 6px;
+      overflow: hidden;
+      pointer-events: none;
     }
-    .sidebar a {
+
+    .dropdown-menu.show {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dropdown-menu a {
       display: block;
-      padding: 15px 20px;
-      border-bottom: 1px solid #eee;
+      padding: 12px 16px;
       text-decoration: none;
       color: #333;
+      border-bottom: 1px solid #eee;
       font-weight: 500;
     }
-    .sidebar a:hover {
+
+    .dropdown-menu a:hover {
       background-color: #f0f0f0;
     }
   </style>
@@ -58,22 +75,29 @@
 
   <header>
     <div class="brand">SHORTXURL</div>
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="menu-icon" onclick="toggleDropdown()">&#9776;</div>
+    <div class="dropdown-menu" id="dropdown">
+      <a href="#">HOME</a>
+      <a href="#">PUBLISH RATES</a>
+      <a href="#">BLOG</a>
+      <a href="#">LOGIN</a>
+      <a href="#">SIGN UP</a>
+      <a href="#">PAYMENT PROOF</a>
+    </div>
   </header>
 
-  <div class="sidebar" id="sidebar">
-    <a href="#">HOME</a>
-    <a href="#">PUBLISH RATES</a>
-    <a href="#">BLOG</a>
-    <a href="#">LOGIN</a>
-    <a href="#">SIGN UP</a>
-    <a href="#">PAYMENT PROOF</a>
-  </div>
-
   <script>
-    function toggleMenu() {
-      document.getElementById("sidebar").classList.toggle("active");
+    function toggleDropdown() {
+      document.getElementById("dropdown").classList.toggle("show");
     }
+
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("dropdown");
+      const icon = document.querySelector(".menu-icon");
+      if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
   </script>
 
 </body>
