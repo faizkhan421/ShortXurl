@@ -1,2 +1,0 @@
-# ShortXurl
-Shortener website 
