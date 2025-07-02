@@ -179,4 +179,155 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prediction Table (0–9 Only)</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .number {
+      padding: 12px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .number.selected {
+      background-color: #3f51b5;
+      color: white;
+    }
+    #generateBtn, #refreshBtn {
+      padding: 10px 20px;
+      margin-right: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+    #generateBtn {
+      background-color: #4caf50;
+    }
+    #generateBtn:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+    #refreshBtn {
+      background-color: #f44336;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🔢 Prediction Table (0–9)</h2>
+  <div class="grid" id="numberGrid"></div>
+
+  <button id="generateBtn" style="display:none;">Generate</button>
+  <button id="refreshBtn" style="display:none;">Refresh</button>
+
+  <div id="result"></div>
+
+  <script>
+    const grid = document.getElementById("numberGrid");
+    const generateBtn = document.getElementById("generateBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const result = document.getElementById("result");
+
+    let selectedNumbers = [];
+    let generatedOnce = false;
+
+    // Create number grid 0–9
+    for (let i = 0; i <= 9; i++) {
+      const div = document.createElement("div");
+      div.className = "number";
+      div.textContent = i;
+
+      div.addEventListener("click", () => {
+        const number = parseInt(div.textContent.replace(" ✔", ""));
+
+        if (div.classList.contains("selected")) {
+          // Unselect
+          div.classList.remove("selected");
+          div.textContent = number;
+          selectedNumbers = selectedNumbers.filter(n => n !== number);
+        } else {
+          // Select
+          div.classList.add("selected");
+          div.textContent = number + " ✔";
+          selectedNumbers.push(number);
+        }
+
+        // Show/hide buttons
+        if (selectedNumbers.length > 0) {
+          generateBtn.style.display = "inline-block";
+          refreshBtn.style.display = "inline-block";
+          generateBtn.disabled = false;
+          generatedOnce = false;
+        } else {
+          generateBtn.style.display = "none";
+          refreshBtn.style.display = "none";
+          result.textContent = "";
+        }
+      });
+
+      grid.appendChild(div);
+    }
+
+    generateBtn.addEventListener("click", () => {
+      if (selectedNumbers.length === 0 || generatedOnce) return;
+
+      // Seed based on selected numbers
+      const seed = selectedNumbers.reduce((a, b) => a + b, 0);
+      const predictionCount = Math.min(10, (seed % 10) + 1); // 1–10 predictions
+
+      const allNumbers = Array.from({ length: 10 }, (_, i) => i); // 0–9
+      const predicted = [];
+
+      while (predicted.length < predictionCount && allNumbers.length > 0) {
+        const index = Math.floor(Math.random() * allNumbers.length);
+        const num = allNumbers.splice(index, 1)[0]; // remove and use once
+        predicted.push(num);
+      }
+
+      predicted.sort((a, b) => a - b);
+
+      result.textContent =
+        `✅ Selected: ${selectedNumbers.join(", ")}\n\n` +
+        `🔮 Predicted Numbers (${predicted.length}):\n${predicted.join(", ")}`;
+
+      generatedOnce = true;
+      generateBtn.disabled = true;
+    });
+
+    refreshBtn.addEventListener("click", () => {
+      selectedNumbers = [];
+      result.textContent = "";
+      generateBtn.style.display = "none";
+      refreshBtn.style.display = "none";
+      generateBtn.disabled = false;
+      generatedOnce = false;
+
+      document.querySelectorAll(".number").forEach(div => {
+        div.classList.remove("selected");
+        div.textContent = div.textContent.replace(" ✔", "");
+      });
+    });
+  </script>
+
+</body>
+</html>
   Bhes ki tang 
